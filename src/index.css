@@ -1,0 +1,23 @@
+body {
+  margin: 1rem;
+}
+
+td,
+th {
+  text-align: center;
+  padding: 0.5rem 0rem;
+  font-weight: 400;
+  width: 5rem;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+div {
+  pointer-events: auto;
+}
+
+input[type="text"] {
+  width: 1.5em;
+}

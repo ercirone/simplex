@@ -1,0 +1,28 @@
+.BorderBottom {
+  border-bottom: 1px solid black;
+}
+
+.BorderTop {
+  border-top: 1px solid black;
+}
+
+.BorderLeft {
+  border-left: 1px solid black;
+}
+
+.BorderRight {
+  border-right: 1px solid black;
+}
+
+.DiagramClickable {
+  background-color: rgb(191, 255, 80);
+}
+
+.DiagramClickable:hover {
+  background-color: rgb(133, 199, 18);
+  cursor: pointer;
+}
+
+.DiagramClicked {
+  background-color: rgb(224, 212, 40);
+}
