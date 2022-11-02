@@ -94,6 +94,19 @@ const Setup = ({
               </div>
             </div>
             <div>
+              <p>Maximizar</p>
+              <div className="input-group mb-3" style={{ "maxWidth": `${9 * nVar + 1}rem` }}>
+                <span className="input-group-text p-1 cust">f</span>
+                <span className="input-group-text p-1 cust">=</span>
+                {range(nVar).map((j) => (
+                  <React.Fragment key={`coeff-${N}-${j}`}>
+                    {j > 0 ? <span className="input-group-text p-1 cust">+</span> : null}
+                    <input type="text" className="form-control p-1" id={coeffId(j)}></input>
+                    <span className="input-group-text p-1 cust">{name(j)}</span>
+                  </React.Fragment>
+                ))}
+              </div>
+              <p>sujeta a las restricciones:</p>
               {range(nIneq).map((i) => (
                 <div className="input-group mb-3" style={{ "maxWidth": `${9 * nVar + 1}rem` }} key={`row-${N}-${i}`}>
                   {range(nVar).map((j) => (
@@ -107,17 +120,11 @@ const Setup = ({
                   <input type="text" className="form-control p-1" id={indepId(i)} />
                 </div>
               ))}
-              <div className="input-group mb-3" style={{ "maxWidth": `${9 * nVar + 1}rem` }}>
-                <span className="input-group-text p-1 cust">f</span>
-                <span className="input-group-text p-1 cust">=</span>
-                {range(nVar).map((j) => (
-                  <React.Fragment key={`coeff-${N}-${j}`}>
-                    {j > 0 ? <span className="input-group-text p-1 cust">+</span> : null}
-                    <input type="text" className="form-control p-1" id={coeffId(j)}></input>
-                    <span className="input-group-text p-1 cust">{name(j)}</span>
-                  </React.Fragment>
-                ))}
-              </div>
+              <p>{range(nVar).map(j =>
+              <React.Fragment key={`ineq-${j}`}>{name(j)}&nbsp;&ge;&nbsp;0
+              {j < nVar-2 ? <>,&nbsp;</> : j === nVar-2 ? <>&nbsp;y&nbsp;</> : <>.</>}
+              </React.Fragment>
+              )}</p>
             </div>
             <p>
               <input
@@ -155,8 +162,11 @@ const readCoefficients = (numVar, numIneq) => {
       Fraction(document.getElementById(coeffId(j)).value)
     );
   } catch (e) {
-    console.log("¡Error al leer los coeficienes!");
     alert("¡Error al leer los coeficientes!", "danger");
+    return false;
+  }
+  if (indep.some(c => c<=0)) {
+    alert("¡Los términos independientes deben ser positivos!", "danger");
     return false;
   }
   return {
