@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.c423f7f4.css",
-    "main.js": "/static/js/main.5eb8bcb7.js",
-    "index.html": "/index.html",
-    "main.c423f7f4.css.map": "/static/css/main.c423f7f4.css.map",
-    "main.5eb8bcb7.js.map": "/static/js/main.5eb8bcb7.js.map"
+    "main.css": "/simplex/static/css/main.c423f7f4.css",
+    "main.js": "/simplex/static/js/main.5eb8bcb7.js",
+    "index.html": "/simplex/index.html",
+    "main.c423f7f4.css.map": "/simplex/static/css/main.c423f7f4.css.map",
+    "main.5eb8bcb7.js.map": "/simplex/static/js/main.5eb8bcb7.js.map"
   },
   "entrypoints": [
     "static/css/main.c423f7f4.css",
