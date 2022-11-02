@@ -1,5 +1,5 @@
 import Fraction from "fraction.js";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { range } from "./utils";
 import { getInitialTable, nameGen } from "./simplex";
 
@@ -13,93 +13,129 @@ const Setup = ({
   initialNumIneq,
   setNumVar,
   setNumIneq,
+  reset,
 }) => {
   const [nVar, setNVar] = useState(initialNumVar);
   const [nIneq, setNIneq] = useState(initialNumIneq);
   const [N, setN] = useState(0);
+  const submitRef = useRef();
   const name = nameGen(nVar, nIneq, "x", "s");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const reading = readCoefficients(nVar, nIneq);
+    reset();
+    if (reading) {
+      const { matrix, indep, func } = reading;
+      setSimplexSeq([getInitialTable(matrix, indep, func)]);
+      setNumVar(nVar);
+      setNumIneq(nIneq);
+      submitRef.current.focus();
+    }
+    return false;
+  }
+  const handleReset = (e) => {
+    e.preventDefault();
+    reset();
+    for (let i = 0; i < nIneq; i++) {
+      document.getElementById(indepId(i)).value = "";
+      for (let j = 0; j < nVar; j++) {
+        document.getElementById(matrixId(i, j)).value = "";
+      }
+    }
+    for (let j = 0; j < nVar; j++) {
+      document.getElementById(coeffId(j)).value = "";
+    }
+    window.scrollTo(0, 0);
+    return false;
+  }
   return (
     <>
-      <p>
-        <label>Número de variables:</label> &nbsp;
-        <select
-          value={nVar}
-          onChange={(e) => {
-            setNVar(+e.target.value);
-            setN(N + 1);
-          }}
-        >
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
-      </p>
-      <p>
-        <label>Número de restricciones:</label> &nbsp;
-        <select
-          value={nIneq}
-          onChange={(e) => {
-            setNIneq(+e.target.value);
-            setN(N + 1);
-          }}
-        >
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
-      </p>
-      <div>
-        <table>
-          <tbody>
-            {range(nIneq).map((i) => (
-              <tr key={`row-${N}-${i}`}>
+      <div className="card mb-3">
+        <div className="card-body">
+          <h3 className="card-title mb-3 h5">
+            Nuevo problema estándar de maximización
+          </h3>
+          <form onSubmit={handleSubmit} onReset={handleReset}>
+            <div className="row mb-3">
+              <label htmlFor="numVar" className="col-form-label col-auto">Número de variables:</label> &nbsp;
+              <div className="col-auto">
+                <select
+                  id="numVar"
+                  className="form-select"
+                  value={nVar}
+                  onChange={(e) => {
+                    setNVar(+e.target.value);
+                    setN(N + 1);
+                  }}
+                >
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+              </div>
+            </div>
+            <div className="row mb-3">
+              <label htmlFor="numIneq" className="col-form-label col-auto">Número de restricciones:</label> &nbsp;
+              <div className="col-auto">
+                <select
+                  id="numIneq"
+                  className="form-select"
+                  value={nIneq}
+                  onChange={(e) => {
+                    setNIneq(+e.target.value);
+                    setN(N + 1);
+                  }}
+                >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              {range(nIneq).map((i) => (
+                <div className="input-group mb-3" style={{ "maxWidth": `${9 * nVar + 1}rem` }} key={`row-${N}-${i}`}>
+                  {range(nVar).map((j) => (
+                    <React.Fragment key={`${N}-${i}-${j}`}>
+                      {j === 0 ? null : <span className="input-group-text p-1 cust">+</span>}
+                      <input type="text" className="form-control p-1" id={matrixId(i, j)} />
+                      <span className="input-group-text p-1 cust">{name(j)}</span>
+                    </React.Fragment>
+                  ))}
+                  <span className="input-group-text p-1 cust">&le;</span>
+                  <input type="text" className="form-control p-1" id={indepId(i)} />
+                </div>
+              ))}
+              <div className="input-group mb-3" style={{ "maxWidth": `${9 * nVar + 1}rem` }}>
+                <span className="input-group-text p-1 cust">f</span>
+                <span className="input-group-text p-1 cust">=</span>
                 {range(nVar).map((j) => (
-                  <React.Fragment key={`${N}-${i}-${j}`}>
-                    {j === 0 ? null : <td>+</td>}
-                    <td>
-                      <input type="text" id={matrixId(i, j)}></input>
-                    </td>
-                    <td>{name(j)}</td>
+                  <React.Fragment key={`coeff-${N}-${j}`}>
+                    {j > 0 ? <span className="input-group-text p-1 cust">+</span> : null}
+                    <input type="text" className="form-control p-1" id={coeffId(j)}></input>
+                    <span className="input-group-text p-1 cust">{name(j)}</span>
                   </React.Fragment>
                 ))}
-                <td>&le;</td>
-                <td>
-                  <input type="text" id={indepId(i)}></input>
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td>f</td>
-              <td>=</td>
-              {range(nVar).map((j) => (
-                <React.Fragment key={`coeff-${N}-${j}`}>
-                  {j > 0 ? <td>+</td> : null}
-                  <td>
-                    <input type="text" id={coeffId(j)}></input>
-                  </td>
-                  <td>{name(j)}</td>
-                </React.Fragment>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </div>
+            <p>
+              <input
+                ref={submitRef}
+                type="submit"
+                className="btn btn-primary"
+                value="¡Empezar!"
+              />&nbsp;
+              <input
+                type="reset"
+                className="btn btn-secondary"
+                value="Limpiar"
+              />
+            </p>
+          </form>
+        </div>
       </div>
-      <p>
-        <button
-          onClick={() => {
-            const reading = readCoefficients(nVar, nIneq);
-            if (reading) {
-              const { matrix, indep, func } = reading;
-              setSimplexSeq([getInitialTable(matrix, indep, func)]);
-              setNumVar(nVar);
-              setNumIneq(nIneq);
-            }
-          }}
-        >
-          ¡Empezar!
-        </button>
-      </p>
+      <div id="liveAlertPlaceholder"></div>
     </>
   );
 };
@@ -120,6 +156,7 @@ const readCoefficients = (numVar, numIneq) => {
     );
   } catch (e) {
     console.log("¡Error al leer los coeficienes!");
+    alert("¡Error al leer los coeficientes!", "danger");
     return false;
   }
   return {
@@ -128,5 +165,17 @@ const readCoefficients = (numVar, numIneq) => {
     func: func,
   };
 };
+
+const alert = (message, type) => {
+  const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+  alertPlaceholder.append(wrapper)
+}
 
 export default Setup;

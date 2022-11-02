@@ -1,13 +1,12 @@
-body {
-  margin: 1rem;
+.cust {
+  border: none;
+  background-color: inherit;
 }
 
 td,
 th {
   text-align: center;
-  padding: 0.5rem 0rem;
   font-weight: 400;
-  width: 5rem;
 }
 
 table {
@@ -18,6 +17,18 @@ div {
   pointer-events: auto;
 }
 
-input[type="text"] {
-  width: 1.5em;
+footer {
+  background-color: var(--bs-secondary);
+}
+
+.footer {
+  color: var(--bs-gray-400);
+}
+
+.link-footer, .link-footer:link, .link-footer:visited {
+  color: inherit;
+}
+
+.link-footer:hover {
+  color: white;
 }

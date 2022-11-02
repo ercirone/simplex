@@ -1,17 +1,26 @@
+td, th {
+  --border-color: grey;
+}
+
 .BorderBottom {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .BorderTop {
-  border-top: 1px solid black;
+  border-top: 1px solid var(--border-color);
 }
 
 .BorderLeft {
-  border-left: 1px solid black;
+  border-left: 1px solid var(--border-color);
 }
 
 .BorderRight {
-  border-right: 1px solid black;
+  border-right: 1px solid var(--border-color);
+}
+
+.LeftAligned {
+  text-align: left;
+  padding-left: 0.5rem;
 }
 
 .DiagramClickable {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { range } from "./utils";
 import { nameGen } from "./simplex";
 import "./Diagram.css";
@@ -20,16 +20,22 @@ function Diagram({ numVar, numIneq, rows, labels, clickableCoeffs, onClick }) {
       range(numIneq).map((i) => range(numVar + numIneq).map((j) => false))
     );
   };
+  const tdStyle = { "width": `${100 / (numVar + numIneq + 2)}%` };
+  const diagramStyle = {
+    "width": "100%",
+    "maxWidth": `${7*(numVar+numIneq+2)}rem`,
+  };
+  useEffect(scrollDown);
   return (
-    <>
-      <table>
+    <div className="table-responsive">
+      <table style={diagramStyle}>
         <thead>
           <tr>
             {range(numVar + numIneq).map((j) => (
-              <th key={`th-${j}`}>{name(j)}</th>
+              <th key={`th-${j}`} style={tdStyle}>{name(j)}</th>
             ))}
-            <th></th>
-            <th></th>
+            <th style={tdStyle}></th>
+            <th style={tdStyle}></th>
           </tr>
         </thead>
         <tbody>
@@ -44,7 +50,7 @@ function Diagram({ numVar, numIneq, rows, labels, clickableCoeffs, onClick }) {
                   {c.toFraction()}
                 </td>
               ))}
-              {<td>{name(labels[i])}</td>}
+              {<td className="BorderLeft LeftAligned">{name(labels[i])}</td>}
             </tr>
           ))}
         </tbody>
@@ -59,7 +65,7 @@ function Diagram({ numVar, numIneq, rows, labels, clickableCoeffs, onClick }) {
           </tr>
         </tfoot>
       </table>
-    </>
+    </div>
   );
 }
 
@@ -85,5 +91,7 @@ const thClass = (numVar, numIneq, j) =>
     j === 0 || j === numVar || j === numVar + numIneq ? "BorderLeft" : "",
     j === numVar + numIneq ? "BorderRight" : "",
   ].join(" ");
+
+const scrollDown = () => { window.scrollTo(0, document.body.scrollHeight); };
 
 export default Diagram;
